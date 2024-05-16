@@ -7,7 +7,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 import tkinter as tk
 from tkinter import filedialog, messagebox
-
+import socket
 # from tkinter import *
 # * fetch website content from url
 def fetch_website_content(url):
@@ -207,13 +207,23 @@ class NoteApp:
         # Load the initial file
         self.open_file()
 
-
+    def is_valid_domain(self,domain):
+        try:
+            socket.gethostbyname(domain)
+            return True
+        except socket.error:
+            return False
     def validate_input(self,new_value):
         # Check if the new value is empty or a digit
         return new_value == '' or new_value.isdigit()
     def show_message(self):
-        # website_url_sub1 = "https://www.reg.cmu.ac.th/webreg/th/"
         website_url_sub1 = self.entry.get()
+        if(self.entry.get() == "" or not self.is_valid_domain(website_url_sub1)): 
+            messagebox.showerror("URL not valid","URL not valid or domain not found.")
+            return
+
+        if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
+            website_url_sub1 =  "https://" +website_url_sub1
         website_url_sub2 = ""
         rateLimit = int(self.entryNumber.get()) if not self.entryNumber.get() == '' else 0
         print(get_domain_info(website_url_sub1))
