@@ -8,6 +8,8 @@ from urllib.parse import urlparse
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import socket
+import time
+
 # from tkinter import *
 # * fetch website content from url
 def fetch_website_content(url):
@@ -39,14 +41,16 @@ def find_defacement(url,url_main_sub,rateLimit=3):
     isNotFinish = True
     paths = [fetch_domain+sub_fetch_domain]
     limit =1
-
+    estimate_time=0
     try:
         open('keyword.txt', "x")
         print('keyword.txt does not exits.\nNow it was created please write keyword in file')
         return
     except FileExistsError:
         while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
-            limit += 1
+            print(estimate_time)
+            start_time = time.time()
+            
             if len(paths) ==  0: break
             else : fetch_url = paths.pop(0)
             found =[]
@@ -84,6 +88,11 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                     if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
+            limit += 1
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            estimate_time = elapsed_time*len(paths) if len(paths)<limit or rateLimit==0 else elapsed_time*(rateLimit-limit+1)
+            
         write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
 
 def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
@@ -91,8 +100,8 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     current_date = datetime.now().date()
     f = open(f"./History/{str(urlparse(Domain).netloc)}-{current_date}.txt", "w", encoding='utf-8')
     f.write(f"{str(datetime.now().time())}\n")
-    f.write(str(get_domain_info(website_url_sub1)))
-    f.write("[Defacement detected]\n")
+    f.write(str(get_domain_info(Domain)))
+    f.write("\n[Defacement detected]\n")
     if(not url_found): f.write("-\n")
     for i in range(len(url_found)):
         f.write(f"{url_found[i]}\n")
@@ -218,12 +227,14 @@ class NoteApp:
         return new_value == '' or new_value.isdigit()
     def show_message(self):
         website_url_sub1 = self.entry.get()
-        if(self.entry.get() == "" or not self.is_valid_domain(website_url_sub1)): 
+        
+        if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
+            website_url_sub1 =  "https://" +website_url_sub1
+            
+        if(self.entry.get() == "" or not self.is_valid_domain(urlparse(website_url_sub1).netloc)): 
             messagebox.showerror("URL not valid","URL not valid or domain not found.")
             return
 
-        if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
-            website_url_sub1 =  "https://" +website_url_sub1
         website_url_sub2 = ""
         rateLimit = int(self.entryNumber.get()) if not self.entryNumber.get() == '' else 0
         print(get_domain_info(website_url_sub1))
@@ -242,11 +253,13 @@ class NoteApp:
         self.text_frame.pack_forget()
         self.button_frame.pack_forget()
         self.run_button.pack_forget()
+        self.entry_number_frame.pack_forget()
         self.back_button.pack(pady=20)
 
     def show_all_widgets(self):
         self.welcome_label.pack(pady=(10, 0))
         self.entry_frame.pack(pady=10)
+        self.entry_number_frame.pack(pady=10)
         self.keyword_label.pack(pady=(10, 0))
         self.text_frame.pack(padx=10, pady=10, expand=True, fill='both')
         self.button_frame.pack(padx=10, pady=10)
@@ -273,9 +286,6 @@ class NoteApp:
             messagebox.showerror("Error", f"Failed to save file: {e}")
 
 
-website_url_sub1 = "https://www.reg.cmu.ac.th/webreg/th/"
-website_url_sub2 = ""
-rateLimit =0
 root = tk.Tk()
 app = NoteApp(root)
 root.mainloop()
