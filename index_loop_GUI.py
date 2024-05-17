@@ -272,6 +272,7 @@ class NoteApp:
                 with open('keyword.txt','r', encoding='utf-8') as file:
                     csv_reader = csv.reader(file)
                     for keyword in csv_reader:
+                        if len(keyword)==0 : continue
                         if soup.find(string=lambda text: text and keyword[0] in text):
                             found.append(keyword[0])
                     if(found) :
