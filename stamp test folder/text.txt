@@ -1,0 +1,95 @@
+ฟังก์ชั่น internet status ของโปรแกรมไม่ทำงาน ขึ้นว่า checking . . . ทั้งที่เชื่อมต่อกับ internet อยู่ ควร update เป็น connect 
+
+import os
+import sys
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
+import urllib.request
+
+# ฟังก์ชั่นเพื่อตรวจสอบการเชื่อมต่ออินเทอร์เน็ต
+def check_internet_connection():
+    try:
+        # พยายามเชื่อมต่อไปยัง Google
+        urllib.request.urlopen('http://www.google.com', timeout=1)
+        return True
+    except:
+        return False
+
+# ฟังก์ชั่นสำหรับอัพเดตสถานะการเชื่อมต่อ
+def update_status():
+    if check_internet_connection():
+        Internet_Label.config(text="Connected", fg="green")
+    else:
+        Internet_Label.config(text="Disconnected", fg="red")
+    # ตั้งค่าให้ฟังก์ชั่นนี้ถูกเรียกอีกครั้งใน 3 วินาที
+    root.after(3000, update_status)
+
+def get_program_directory():
+    # หา path ของโฟลเดอร์ที่โปรแกรมนี้อยู่
+    program_path = os.path.dirname(sys.argv[0])
+    return program_path
+
+def open_History_folder(program_path):
+    # ระบุ path ของโฟลเดอร์ที่ต้องการเปิด
+    folder_path = program_path+r"\History"  # เปลี่ยนเป็น path ที่ต้องการเปิด
+
+    # เปิดโฟลเดอร์ด้วยโปรแกรมเริ่มต้นของระบบ Windows
+    os.startfile(folder_path)
+
+def validate_entry(new_value):
+    if new_value == "No Limit" or new_value == "":
+        return True
+    try:
+        int(new_value)
+        return True
+    except ValueError:
+        return False
+
+def on_focus_in(event):
+    if event.widget.get() == "No Limit":
+        event.widget.delete(0, tk.END)
+
+def on_focus_out(event):
+    if event.widget.get() == "":
+        event.widget.insert(0, "No Limit")
+
+root = tk.Tk()
+root.title("Open History Folder")
+root.geometry('500x500+350+100')
+
+tk.Label(root, text='Web Defacetion Scanner', font=('Arial', 16)).place(x=125,y=10)
+tk.Label(root, text='by ITSC Intern 2024', font=('Arial', 10)).place(x=185,y=40)
+
+tk.Label(root, text="Internet Status :").place(x=30,y=85)
+Internet_Label = tk.Label(root, text="Checking . . .").place(x=125,y=85)
+
+tk.Label(root, text="URL :").place(x=85,y=115)
+URL_Entry = tk.Entry(root, width=45).place(x=125,y=115)
+
+tk.Label(root, text="Scan limit :").place(x=55, y=145)
+validate_cmd = root.register(validate_entry)
+Scan_Limit_Entry = tk.Entry(root, validate="key", validatecommand=(validate_cmd, '%P'), width=45)
+Scan_Limit_Entry.insert(0, "No Limit")
+Scan_Limit_Entry.bind("<FocusIn>", on_focus_in)
+Scan_Limit_Entry.bind("<FocusOut>", on_focus_out)
+Scan_Limit_Entry.place(x=125, y=145)
+
+
+tk.Label(root, text="Keyword :").place(x=55,y=180)
+# Frame for Text Editor
+text_frame = tk.Frame(root)
+text_frame.place(x=125, y=180, width=150, height=275)
+# Text Widget for displaying and editing the content
+text = tk.Text(text_frame, wrap='word')
+text.pack(fill=tk.BOTH, expand=True)
+
+# Create three buttons
+button1 = tk.Button(root, text="Save Keyword").place(x=310,y=180)
+button2 = tk.Button(root, text="View History", command=lambda: open_History_folder(get_program_directory())).place(x=310,y=215)
+button3 = tk.Button(root, text="Start Scan").place(x=310,y=250)
+button4 = tk.Button(root, text="Exit Program").place(x=310,y=430)
+
+root.after(0, update_status)
+
+root.mainloop()
