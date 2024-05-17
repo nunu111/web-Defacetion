@@ -252,7 +252,7 @@ class NoteApp:
                 self.progress_Frame.update()
                 
                 print( "%.2f" % estimate_time)
-                self.progress_Time.config(text=f"Estimate time: {"%.2f" %estimate_time} sec")
+                self.progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
                 start_time = time.time()
                 
                 if len(paths) ==  0: break
