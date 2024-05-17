@@ -12,88 +12,9 @@ import time
 
 # from tkinter import *
 # * fetch website content from url
-def fetch_website_content(url):
-    
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.text
-        else: #! cannot access to website
-            print(f"Failed to fetch website content. Status code: {response.status_code}, on the website {url}" )
-            return None
-    except Exception as e:
-        print(f"Error fetching website content: on the website {url}\n", e)
-        return None
 
-def find_defacement(url,url_main_sub,rateLimit=3):
-    #* Check HTML content variable
-    found =[]
-    paths = ['']
-    url_found =[]
-    founding=[]
-    url_notfound =[]
-    url_cannot_fetch = []
 
-    #* Passive scan variable
-    fetched =set()
-    fetch_domain = url.strip()
-    sub_fetch_domain = url_main_sub.strip()
-    isNotFinish = True
-    paths = [fetch_domain+sub_fetch_domain]
-    limit =1
-    estimate_time=0
-    try:
-        open('keyword.txt', "x")
-        print('keyword.txt does not exits.\nNow it was created please write keyword in file')
-        return
-    except FileExistsError:
-        while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
-            print(estimate_time)
-            start_time = time.time()
-            
-            if len(paths) ==  0: break
-            else : fetch_url = paths.pop(0)
-            found =[]
-            website_content = fetch_website_content(fetch_url)
-            fetched.add(fetch_url)
 
-            if(website_content == None ): 
-                url_cannot_fetch.append(fetch_url)
-                continue
-            soup = BeautifulSoup(website_content, 'html.parser')
-            links = soup.find_all('a', href=True)
-            with open('keyword.txt','r', encoding='utf-8') as file:
-                csv_reader = csv.reader(file)
-                for keyword in csv_reader:
-                    if soup.find(string=lambda text: text and keyword[0] in text):
-                        found.append(keyword[0])
-                if(found) :
-                    print("Defacement detected on the website:", fetch_url)
-                    print(f'summary keyword that were found : {found}')
-                    url_found.append(fetch_url)
-                    founding.append(found)
-                else : 
-                    print("No defacement detected on the website:", fetch_url)
-                    url_notfound.append(fetch_url)
-            for link in links:
-                path = link['href']
-                path =path.strip()
-                if(path == None) : continue
-                if (len(path) > 1):
-                    if(path.startswith('/')):
-                        path = url+path
-                    elif(path.startswith(url)):
-                        path = path
-                    else :continue
-                    if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
-                        if  ((path not in paths)and( path not in fetched)):
-                            paths.append(path)
-            limit += 1
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            estimate_time = elapsed_time*len(paths) if len(paths)<limit or rateLimit==0 else elapsed_time*(rateLimit-limit+1)
-            
-        write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
 
 def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     os.makedirs("./History", exist_ok=True)
@@ -144,7 +65,7 @@ class NoteApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Simple Note App")
-
+        self.root.geometry("600x800")
         # Label for the welcome message
         self.welcome_label = tk.Label(self.root, text="URL scanner", font=('Arial', 16))
         self.welcome_label.pack(pady=(10, 0))  # Top padding only
@@ -210,6 +131,11 @@ class NoteApp:
         self.result_label = tk.Label(self.root, text="", font=('Helvetica', 16))
         self.result_label.pack(pady=20)
 
+        self.progress_Frame = tk.Frame(self.root)
+        self.progress_Frame.pack_forget()
+        self.progress_Time =tk.Label(self.progress_Frame, text="Estimate Time:")
+        self.progress_Time.pack_forget()
+
         self.back_button = tk.Button(self.root, text="Back", command=self.go_back)
         self.back_button.pack_forget()
 
@@ -226,21 +152,24 @@ class NoteApp:
         # Check if the new value is empty or a digit
         return new_value == '' or new_value.isdigit()
     def show_message(self):
+        self.hide_widgets_except_result_and_back()
+
         website_url_sub1 = self.entry.get()
-        
         if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
             website_url_sub1 =  "https://" +website_url_sub1
             
         if(self.entry.get() == "" or not self.is_valid_domain(urlparse(website_url_sub1).netloc)): 
             messagebox.showerror("URL not valid","URL not valid or domain not found.")
             return
-
+        self.result_label.config(text="Result")
+        
+        
         website_url_sub2 = ""
         rateLimit = int(self.entryNumber.get()) if not self.entryNumber.get() == '' else 0
+        
         print(get_domain_info(website_url_sub1))
-        find_defacement(website_url_sub1,website_url_sub2,rateLimit)
-        self.result_label.config(text="Result")
-        self.hide_widgets_except_result_and_back()
+        self.find_defacement(website_url_sub1,website_url_sub2,rateLimit)
+        
 
     def go_back(self):
         self.result_label.config(text="")
@@ -254,7 +183,9 @@ class NoteApp:
         self.button_frame.pack_forget()
         self.run_button.pack_forget()
         self.entry_number_frame.pack_forget()
-        self.back_button.pack(pady=20)
+        self.progress_Frame.pack(expand=1, fill='both')
+        self.progress_Time.pack()
+        # self.progress_Text.pack(fill=tk.BOTH, padx=5, pady=5)
 
     def show_all_widgets(self):
         self.welcome_label.pack(pady=(10, 0))
@@ -264,8 +195,10 @@ class NoteApp:
         self.text_frame.pack(padx=10, pady=10, expand=True, fill='both')
         self.button_frame.pack(padx=10, pady=10)
         self.run_button.pack(pady=10)
+        self.progress_Frame.pack_forget()
         self.back_button.pack_forget()
-
+        self.progress_text.pack_forget()
+        self.progress_text.delete('1.0', tk.END)
     def open_file(self):
         try:
             with open('keyword.txt', 'r', encoding='utf-8') as file:
@@ -285,6 +218,114 @@ class NoteApp:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save file: {e}")
 
+    '''
+    
+    '''
+    def find_defacement(self,url,url_main_sub,rateLimit=3):
+        #* Check HTML content variable
+        found =[]
+        paths = ['']
+        url_found =[]
+        founding=[]
+        url_notfound =[]
+        url_cannot_fetch = []
+
+        #* Passive scan variable
+        fetched =set()
+        fetch_domain = url.strip()
+        sub_fetch_domain = url_main_sub.strip()
+        isNotFinish = True
+        paths = [fetch_domain+sub_fetch_domain]
+        limit =1
+        estimate_time=0
+        self.root.update()
+        self.progress_text = tk.Text(self.progress_Frame)
+        self.progress_text.pack( fill=tk.BOTH, padx=5, pady=5)
+        
+        try:
+            open('keyword.txt', "x")
+            print('keyword.txt does not exits.\nNow it was created please write keyword in file')
+            return
+        except FileExistsError:
+            while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
+                
+                self.progress_Frame.update()
+                
+                print( "%.2f" % estimate_time)
+                self.progress_Time.config(text=f"Estimate time: {"%.2f" %estimate_time} sec")
+                start_time = time.time()
+                
+                if len(paths) ==  0: break
+                else : fetch_url = paths.pop(0)
+                found =[]
+                website_content = self.fetch_website_content(fetch_url)
+                fetched.add(fetch_url)
+
+                if(website_content == None ): 
+                    url_cannot_fetch.append(fetch_url)
+                    end_time = time.time()
+                    elapsed_time = end_time - start_time
+                    estimate_time -= elapsed_time
+                    continue
+                soup = BeautifulSoup(website_content, 'html.parser')
+                links = soup.find_all('a', href=True)
+                with open('keyword.txt','r', encoding='utf-8') as file:
+                    csv_reader = csv.reader(file)
+                    for keyword in csv_reader:
+                        if soup.find(string=lambda text: text and keyword[0] in text):
+                            found.append(keyword[0])
+                    if(found) :
+                        self.progress_text.config(state=tk.NORMAL)
+                        self.progress_text.insert(tk.END,f"Defacement detected on the website: {fetch_url}\n")
+                        self.progress_text.insert(tk.END,f'summary keyword that were found : {found}\n')
+                        url_found.append(fetch_url)
+                        founding.append(found)
+                        self.progress_text.see(tk.END)
+                        self.progress_text.config(state=tk.DISABLED)
+
+                    else : 
+                        self.progress_text.config(state=tk.NORMAL)
+                        self.progress_text.insert(tk.END,f"No defacement detected on the website: {fetch_url}\n")
+                        url_notfound.append(fetch_url)
+                        self.progress_text.see(tk.END)
+                        self.progress_text.config(state=tk.DISABLED)
+
+                for link in links:
+                    path = link['href']
+                    path =path.strip()
+                    if(path == None) : continue
+                    if (len(path) > 1):
+                        if(path.startswith('/')):
+                            path = url+path
+                        elif(path.startswith(url)):
+                            path = path
+                        else :continue
+                        if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
+                            if  ((path not in paths)and( path not in fetched)):
+                                paths.append(path)
+                limit += 1
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                estimate_time = elapsed_time*len(paths) if len(paths)<limit or rateLimit==0 else elapsed_time*(rateLimit-limit+1)
+            
+            self.progress_Time.config(text="Finish")
+            write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
+        self.back_button.pack(pady=20)
+    def fetch_website_content(self,url):
+        
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                return response.text
+            else: #! cannot access to website
+                self.progress_text.insert(tk.END,f"Failed to fetch website content. Status code: {response.status_code}, on the website {url}")
+                self.progress_text.see(tk.END)
+
+                return None
+        except Exception as e:
+            self.progress_text.insert(tk.END,f"Error fetching website content: on the website {url}\n", e)
+            self.progress_text.see(tk.END)
+            return None
 
 root = tk.Tk()
 app = NoteApp(root)
