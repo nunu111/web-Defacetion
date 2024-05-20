@@ -291,14 +291,18 @@ def fetch_website_content(url):
         if response.status_code == 200:
             return response.text
         else: #! cannot access to website
-            result_text.insert(tk.END,f"Failed to fetch website content. Status code: {response.status_code}, on the website {url}")
+            result_text.config(state=tk.NORMAL)
+            result_text.insert(tk.END,f"Failed to fetch website content. Status code: {response.status_code}, on the website {url}\n")
             result_text.see(tk.END)
+            result_text.config(state=tk.DISABLED)
             
 
             return None
     except Exception as e:
+        result_text.config(state=tk.NORMAL)
         result_text.insert(tk.END,f"Error fetching website content: on the website {url}\n", e)
         result_text.see(tk.END)
+        result_text.config(state=tk.DISABLED)
         return None
 
 def find_defacement(url,url_main_sub,rateLimit=3):
