@@ -7,11 +7,13 @@ from tkinter import messagebox
 import urllib.request
 from urllib.parse import urlparse
 from datetime import datetime
-import whois
+
 import csv
 import requests
 import time
 import socket
+import threading
+
 def run():
     if(not checkFormatURL()): return
     title.place_forget()
@@ -51,7 +53,8 @@ def back():
     result_frame.place_forget()
     button2.place_forget()
     button5.place_forget()
-
+    progress_Time.place_forget()
+    
     title.place(x=225,y=10)
     by.place(x=285,y=40)
     internet_text.place(x=130,y=85)
@@ -229,7 +232,6 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     current_date = datetime.now().date()
     f = open(f"./History/{str(urlparse(Domain).netloc)}-{current_date}.txt", "w", encoding='utf-8')
     f.write(f"{str(datetime.now().time())}\n")
-    f.write(str(get_domain_info(Domain)))
     f.write("\n[Defacement detected]\n")
     if(not url_found): f.write("-\n")
     for i in range(len(url_found)):
@@ -247,12 +249,7 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     f.write("------------------------------------------------------------------")
     print("Finish")
 
-def get_domain_info(domain_name):
-    try:
-        domain_info = whois.whois(domain_name)
-        return domain_info
-    except Exception as e:
-        return f"An error occurred: {e}"
+
     
 def fetch_website_content(url):
     try:
