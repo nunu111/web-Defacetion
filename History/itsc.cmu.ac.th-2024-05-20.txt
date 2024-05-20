@@ -1,0 +1,33 @@
+13:04:36.030930
+
+[Defacement detected]
+-
+[No defacement detected]
+https://itsc.cmu.ac.th/
+https://itsc.cmu.ac.th//Authentication/SignOn.aspx
+https://itsc.cmu.ac.th//th/service/28b85f31-7912-4f9c-b029-321ae672aa78
+https://itsc.cmu.ac.th//th/service/D68907F7-0D66-47BB-BFB9-F2F2CD42A8FD
+https://itsc.cmu.ac.th//th/service/7F0A96BF-E40F-4180-B306-F46111954478
+https://itsc.cmu.ac.th//th/service/E0A454BF-D897-4DCB-9BF2-1A38892A080C
+https://itsc.cmu.ac.th//th/articleview/1256cb0f-5a55-4bb4-86e9-c14180278c67
+https://itsc.cmu.ac.th//th/articleview/663c44d1-3336-40db-be82-dcd4eebd772e
+https://itsc.cmu.ac.th//th/articleview/4c9ea7f8-95a1-44a3-b8b0-6ee122042aaf
+https://itsc.cmu.ac.th//th/articleview/43b6f39a-15df-407e-8591-b68414436605
+https://itsc.cmu.ac.th//th/articleview/6d463c6d-2e8d-486b-8f88-c67c61f9cd77
+https://itsc.cmu.ac.th//th/articleview/0427bb38-0410-4ba9-b06a-66ea4c28daa8
+https://itsc.cmu.ac.th//th/articleview/b387747d-8182-4c70-99eb-f6124c7857db
+https://itsc.cmu.ac.th//th/articleview/0a2239bd-45b7-409d-9812-d0613d86b140
+https://itsc.cmu.ac.th//th/articleview/f7802588-4e0b-456e-b5ea-21c0a769b02a
+https://itsc.cmu.ac.th//th/articleview/3c4a49db-2c89-4238-8521-5cbf44d35e65
+https://itsc.cmu.ac.th//th/articleview/df882c50-5bf9-4373-8cd8-3579c482b7f4
+https://itsc.cmu.ac.th//th/articleview/74f995a7-c2bb-48f8-b7f3-980001bc3ae5
+https://itsc.cmu.ac.th//th/articleview/0ce4d82d-65a1-4713-8ff7-ace7f02e7781
+https://itsc.cmu.ac.th//th/articleview/213d86e1-38ec-428b-aac1-113baa4b3231
+https://itsc.cmu.ac.th//th/articleview/00c5f23d-83c6-4410-b82c-6a97a15941d4
+https://itsc.cmu.ac.th//th/articleview/11fa0029-cb24-470f-8a7d-41c0f94ed7f9
+https://itsc.cmu.ac.th//th/articleview/ea795ad2-5a0d-4346-b336-f9889148d491
+https://itsc.cmu.ac.th//th/articleview/2cdb94cc-d5f2-45f3-b108-aca8b826dd6b
+https://itsc.cmu.ac.th//th/articleview/2df8e401-2187-4940-8b9f-b06c0bd7fd5c
+[Cannot fetch URL]
+-
+------------------------------------------------------------------

@@ -13,6 +13,7 @@ import requests
 import time
 import socket
 import threading
+from tkinter import ttk
 
 def run():
     if(not checkFormatURL()): return
@@ -30,15 +31,19 @@ def run():
     button2.place_forget()
     button3.place_forget()
     button4.place_forget()
+    progress.set(0)
     
     result_title.place(x=150, y=10)
     result_Label.place(x=150, y=50)
     internet_text.place(x=150, y=85)
     Internet_Label.place(x=235, y=85)
     config_text.place(x=150, y=110)
-    result_frame.place(x=60, y=140, width=600, height=250)
+    result_frame.place(x=60, y=170, width=600, height=250)
     progress_Time.place(x=450, y=110)
-    button2.place(x=270, y=400)
+    button2.place(x=240, y=440)
+    switch_frame.place(x=335, y=440)
+    progressbar.place(x=60, y=145, width=600, height=20)
+
     config_text.config(text="URL : "+str(URL_Entry.get())+" | Scan limit :"+str(Scan_Limit_Entry.get()))
     rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0
     find_defacement(URL_Entry.get(),"",rateLimit)
@@ -54,6 +59,8 @@ def back():
     button2.place_forget()
     button5.place_forget()
     progress_Time.place_forget()
+    button6.place_forget()
+    progressbar.place_forget()
     
     title.place(x=225,y=10)
     by.place(x=285,y=40)
@@ -137,6 +144,12 @@ def open_History_folder(program_path):
     # เปิดโฟลเดอร์ด้วยโปรแกรมเริ่มต้นของระบบ Windows
     os.startfile(folder_path)
 
+def open_Result_file(Domain):
+    current_date = datetime.now().date()
+    f = open(f"./History/{str(urlparse(Domain).netloc)}-{current_date}.txt", "w", encoding='utf-8')
+    os.startfile(f)
+
+
 def validate_entry(new_value):
     if new_value == "No Limit" or new_value == "":
         return True
@@ -157,6 +170,8 @@ def on_focus_out(event):
 root = tk.Tk()
 root.title("Open History Folder")
 root.geometry('700x500+350+100')
+
+bar = 0
 
 title = tk.Label(root, text='Web Defacetion Scanner', font=('Arial', 16))
 title.place(x=225,y=10)
@@ -206,10 +221,11 @@ button4.place(x=410,y=430)
 button5 = tk.Button(root, text="Back", command=back)
 button5.place_forget()
 
+
 result_title = tk.Label(root, text="Web Defacetion Scanner by ITSC Intern 2024")
 result_title.place_forget()
 
-result_Label = tk.Label(root, text="Result", font=('Arial', 16))
+result_Label = tk.Label(root, text="Scan processing", font=('Arial', 16))
 result_Label.place_forget()
 
 config_text = tk.Label(root,text="URL : "+str(URL_Entry.get())+" | Scan limit :"+str(Scan_Limit_Entry.get()))
@@ -223,6 +239,24 @@ result_text.pack(fill=tk.BOTH, expand=True)
 
 progress_Time = tk.Label(root, text="Estimate Time: ")
 progress_Time.place_forget()
+
+switch_frame = tk.Frame(root)
+switch_frame.place_forget()
+
+switch_variable = tk.StringVar(value="resume")
+pause_button = tk.Radiobutton(switch_frame, text="pause", variable=switch_variable,
+                            indicatoron=False, value="pause", width=8)
+resume_button = tk.Radiobutton(switch_frame, text="resume", variable=switch_variable,
+                            indicatoron=False, value="resume", width=8)
+
+pause_button.pack(side="left")
+resume_button.pack(side="left")
+
+button6 = tk.Button(root, text="View Result", command=open_Result_file)
+button6.place_forget()
+
+progress = tk.IntVar()
+progressbar = ttk.Progressbar(root, variable=progress)
 
 root.after(0, update_status)
 root.after(0, open_file)
@@ -259,6 +293,7 @@ def fetch_website_content(url):
         else: #! cannot access to website
             result_text.insert(tk.END,f"Failed to fetch website content. Status code: {response.status_code}, on the website {url}")
             result_text.see(tk.END)
+            
 
             return None
     except Exception as e:
@@ -294,6 +329,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
             
             result_text.update()
+            progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0))
             
             progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
             start_time = time.time()
@@ -333,6 +369,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                     url_notfound.append(fetch_url)
                     result_text.see(tk.END)
                     result_text.config(state=tk.DISABLED)
+                    
 
             for link in links:
                 path = link['href']
@@ -359,7 +396,11 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         result_text.config(state=tk.DISABLED)
         progress_Time.config(text="Finish")
         write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
-    button5.place(x=370, y=400)
+    
+    switch_frame.place_forget()
+    button5.place(x=425, y=440)
+    button6.place(x=335, y=440)
+    
 
     # self.back_button.pack(pady=20)
 
