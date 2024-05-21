@@ -154,7 +154,6 @@ def open_History_folder(program_path):
 
 def open_Result_file():
     current_date = datetime.now().date()
-    f = open(f"./History/{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt", "w", encoding='utf-8')
     os.startfile(f".\\History\\{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt")
 
 
