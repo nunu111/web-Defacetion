@@ -16,7 +16,13 @@ import threading
 from tkinter import ttk
 
 def run():
-    if(not checkFormatURL()): return
+    website_url_sub1 = URL_Entry.get()
+    if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
+        website_url_sub1 =  "https://" +website_url_sub1
+    if(URL_Entry.get() == "" or not is_valid_domain(urlparse(website_url_sub1).netloc)): 
+        messagebox.showerror("URL not valid","URL not valid or domain not found.")
+        return
+
     title.place_forget()
     by.place_forget()
     internet_text.place_forget()
@@ -45,8 +51,10 @@ def run():
     progressbar.place(x=60, y=145, width=600, height=20)
 
     config_text.config(text="URL : "+str(URL_Entry.get())+" | Scan limit :"+str(Scan_Limit_Entry.get()))
-    rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0
-    find_defacement(URL_Entry.get(),"",rateLimit)
+
+    
+    rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '' else 0
+    find_defacement(website_url_sub1,"",rateLimit)
     
 
 def back():
@@ -87,14 +95,7 @@ def is_valid_domain(domain):
     except socket.error:
         return False
 
-def checkFormatURL():
-    website_url_sub1 = URL_Entry.get()
-    if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
-        website_url_sub1 =  "https://" +website_url_sub1
-    if(URL_Entry.get() == "" or not is_valid_domain(urlparse(website_url_sub1).netloc)): 
-        messagebox.showerror("URL not valid","URL not valid or domain not found.")
-        return False
-    return True
+    
 def open_file():
         try:
             with open('keyword.txt', 'r', encoding='utf-8') as file:
@@ -349,6 +350,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 estimate_time -= elapsed_time
+                limit+=1
                 continue
             soup = BeautifulSoup(website_content, 'html.parser')
             links = soup.find_all('a', href=True)
