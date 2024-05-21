@@ -152,10 +152,10 @@ def open_History_folder(program_path):
     # เปิดโฟลเดอร์ด้วยโปรแกรมเริ่มต้นของระบบ Windows
     os.startfile(folder_path)
 
-def open_Result_file(Domain):
+def open_Result_file():
     current_date = datetime.now().date()
-    f = open(f"./History/{str(urlparse(Domain).netloc)}-{current_date}.txt", "w", encoding='utf-8')
-    os.startfile(f)
+    f = open(f"./History/{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt", "w", encoding='utf-8')
+    os.startfile(f".\\History\\{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt")
 
 
 def validate_entry(new_value):
