@@ -1,0 +1,21 @@
+10:38:02.172219
+
+[Defacement detected]
+-
+[No defacement detected]
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi
+[Cannot fetch URL]
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/business
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/about-us
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/switch-to-ais
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/lifestyle/myais
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/en/consumers/fibre/package/super-mesh-wifi
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/fibre/package/super-mesh-wifi
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/store
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/package
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/fibre
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/promotions
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/entertainment
+https://www.ais.th/consumers/fibre/package/super-mesh-wifi/consumers/lifestyle
+------------------------------------------------------------------

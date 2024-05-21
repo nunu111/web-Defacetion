@@ -1,12 +1,16 @@
-13:03:02.222374
+16:15:15.395024
 
 [Defacement detected]
 -
 [No defacement detected]
-https://www.ais.th/consumers/package/postpaid/postpaid-plans
-https://www.ais.th/consumers/package/postpaid/postpaid-plans/consumers
-https://www.ais.th/consumers/package/postpaid/postpaid-plans/business
-https://www.ais.th/consumers/package/postpaid/postpaid-plans/about-us
+https://www.ais.th/consumers
+https://www.ais.th/consumers/store
+https://www.ais.th/consumers/package
+https://www.ais.th/consumers/fibre
+https://www.ais.th/consumers/promotions
+https://www.ais.th/consumers/entertainment
+https://www.ais.th/consumers/lifestyle
 [Cannot fetch URL]
--
+https://www.ais.th/consumers/consumers/switch-to-ais
+https://www.ais.th/consumers/consumers/lifestyle/myais
 ------------------------------------------------------------------

@@ -1,0 +1,11 @@
+11:28:00.190763
+
+[Defacement detected]
+-
+[No defacement detected]
+https://itsc.cmu.ac.th/
+https://itsc.cmu.ac.th//Authentication/SignOn.aspx
+https://itsc.cmu.ac.th//th/service/28b85f31-7912-4f9c-b029-321ae672aa78
+[Cannot fetch URL]
+-
+------------------------------------------------------------------

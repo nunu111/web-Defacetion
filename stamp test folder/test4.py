@@ -1,38 +1,37 @@
-import tkinter as tk  # PEP8: `import *` is not preferred
-import time
+import tkinter as tk
 
-# --- functions ---  # PEP8: all functions before main code
-
-def b1():
-    global running
-
-    running = True
-    
-    loop()
-    
-def loop():    
-    print('MY MAIN CODE')
-    
-    if running:
-        # repeat after 100ms (0.1s)
-        top.after(100, loop)  # funcion's name without ()
-    else:
-        print('STOP')
+class CounterApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Counter App")
         
-def b2(): 
-    global running
-    
-    running = False
-    
-# --- main ---
+        self.counter = 0
+        self.running = True
+        
+        self.label = tk.Label(root, text=str(self.counter), font=("Helvetica", 48))
+        self.label.pack(pady=20)
+        
+        self.pause_button = tk.Button(root, text="Pause", command=self.pause)
+        self.pause_button.pack(side="left", padx=20)
+        
+        self.resume_button = tk.Button(root, text="Resume", command=self.resume)
+        self.resume_button.pack(side="right", padx=20)
+        
+        self.update_counter()
 
-running = True
+    def update_counter(self):
+        if self.running:
+            self.counter += 1
+            self.label.config(text=str(self.counter))
+        self.root.after(1000, self.update_counter)
+        
+    def pause(self):
+        self.running = False
+        
+    def resume(self):
+        self.running = True
 
-top = tk.Tk()
-
-but1 = tk.Button(top, text="On",  command=b1)   # PEP8: inside `()` use `=` without spaces
-but2 = tk.Button(top, text="Off", command=b2)
-but1.pack()
-but2.pack()
-
-top.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = CounterApp(root)
+    root.mainloop()
