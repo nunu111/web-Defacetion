@@ -62,7 +62,7 @@ def run():
     config_text.config(text="URL : "+str(URL_Entry.get())+" | Scan limit :"+str(Scan_Limit_Entry.get()))
 
     #*start the thread and run the function
-    rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '' else 0
+    rateLimit=  int(Scan_Limit_Entry.get()) if not (Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '') else 0
     global running,thread
     running = True
     thread = Thread(target=find_defacement,args=(website_url_sub1,"",rateLimit,))
@@ -405,7 +405,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
             while not running:
                 time.sleep(0.1)
             result_text.update()
-            progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0))
+            progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not (Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '') else 0))
             progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
             start_time = time.time()
 
