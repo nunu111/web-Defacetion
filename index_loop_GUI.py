@@ -12,9 +12,11 @@ import csv
 import requests
 import time
 import socket
-import threading
+from threading import Thread
 from tkinter import ttk
 
+running =False
+thread = None   
 def run():
     website_url_sub1 = URL_Entry.get()
     if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
@@ -54,10 +56,15 @@ def run():
 
     
     rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '' else 0
-    find_defacement(website_url_sub1,"",rateLimit)
-    
+    global running,thread
+    running = True
+    thread = Thread(target=find_defacement,args=(website_url_sub1,"",rateLimit,))
+    # find_defacement(website_url_sub1,"",rateLimit)
+    thread.start()
 
 def back():
+    global running
+    running = False
     result_title.place_forget()
     result_Label.place_forget()
     internet_text.place_forget()
@@ -243,12 +250,17 @@ progress_Time.place_forget()
 
 switch_frame = tk.Frame(root)
 switch_frame.place_forget()
-
+def pauseing():
+    global running
+    running = False
+def resuming():
+    global running
+    running = True
 switch_variable = tk.StringVar(value="resume")
 pause_button = tk.Radiobutton(switch_frame, text="pause", variable=switch_variable,
-                            indicatoron=False, value="pause", width=8)
+                            indicatoron=False, value="pause", width=8,command=pauseing)
 resume_button = tk.Radiobutton(switch_frame, text="resume", variable=switch_variable,
-                            indicatoron=False, value="resume", width=8)
+                            indicatoron=False, value="resume", width=8,command =resuming)
 
 pause_button.pack(side="left")
 resume_button.pack(side="left")
@@ -332,7 +344,8 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         return
     except FileExistsError:
         while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
-            
+            while not running:
+                time.sleep(0.1)
             result_text.update()
             progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0))
             
