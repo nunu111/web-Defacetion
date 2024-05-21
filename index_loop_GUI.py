@@ -15,9 +15,13 @@ import socket
 from threading import Thread
 from tkinter import ttk
 
+#* golbal variable
 running =False
 thread = None   
+
+#*running fetch function
 def run():
+    #*check if url is valid
     website_url_sub1 = URL_Entry.get()
     if not (website_url_sub1.startswith("https://") or website_url_sub1.startswith("http://")):
         website_url_sub1 =  "https://" +website_url_sub1
@@ -25,6 +29,7 @@ def run():
         messagebox.showerror("URL not valid","URL not valid or domain not found.")
         return
 
+    #*clear the home screen
     title.place_forget()
     by.place_forget()
     internet_text.place_forget()
@@ -41,6 +46,7 @@ def run():
     button4.place_forget()
     progress.set(0)
     
+    #*show running screen
     result_title.place(x=150, y=10)
     result_Label.place(x=150, y=50)
     internet_text.place(x=150, y=85)
@@ -51,17 +57,16 @@ def run():
     button2.place(x=240, y=440)
     switch_frame.place(x=335, y=440)
     progressbar.place(x=60, y=145, width=600, height=20)
-
     config_text.config(text="URL : "+str(URL_Entry.get())+" | Scan limit :"+str(Scan_Limit_Entry.get()))
 
-    
+    #*start the thread and run the function
     rateLimit=  int(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '' else 0
     global running,thread
     running = True
     thread = Thread(target=find_defacement,args=(website_url_sub1,"",rateLimit,))
-    # find_defacement(website_url_sub1,"",rateLimit)
     thread.start()
 
+#*return to home screen
 def back():
     global running
     running = False
@@ -95,6 +100,7 @@ def back():
     result_text.delete('1.0', tk.END)
     result_text.config(state=tk.DISABLED)
     
+#*check if url is valid
 def is_valid_domain(domain):
     try:
         socket.gethostbyname(domain)
@@ -102,7 +108,7 @@ def is_valid_domain(domain):
     except socket.error:
         return False
 
-    
+#*check if keyword.txt file exist if not create one
 def open_file():
         try:
             with open('keyword.txt', 'r', encoding='utf-8') as file:
@@ -113,6 +119,7 @@ def open_file():
             open('keyword.txt', "x", encoding='utf-8')
             messagebox.showinfo("File not found","keyword.txt not found. created keyword.txt on this direction.")
 
+#*save keyword in home screen in to the keyword.txt file
 def save_file():
         content = text.get(1.0, tk.END)
         try:
@@ -122,7 +129,7 @@ def save_file():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save file: {e}")
 
-# ฟังก์ชั่นเพื่อตรวจสอบการเชื่อมต่ออินเทอร์เน็ต
+#* ฟังก์ชั่นเพื่อตรวจสอบการเชื่อมต่ออินเทอร์เน็ต
 def check_internet_connection():
     try:
         # พยายามเชื่อมต่อไปยัง Google
@@ -131,7 +138,7 @@ def check_internet_connection():
     except:
         return False
 
-# ฟังก์ชั่นสำหรับอัพเดตสถานะการเชื่อมต่อ
+#* ฟังก์ชั่นสำหรับอัพเดตสถานะการเชื่อมต่อ
 def update_status():
     if check_internet_connection():
         Internet_Label.config(text="Connected", fg="green")
@@ -140,11 +147,12 @@ def update_status():
     # ตั้งค่าให้ฟังก์ชั่นนี้ถูกเรียกอีกครั้งใน 3 วินาที
     root.after(3000, update_status)
 
+#* function that return the program directory
 def get_program_directory():
     # หา path ของโฟลเดอร์ที่โปรแกรมนี้อยู่
     program_path = os.path.dirname(sys.argv[0])
     return program_path
-
+#* fuction that open History folder
 def open_History_folder(program_path):
     # ระบุ path ของโฟลเดอร์ที่ต้องการเปิด
     folder_path = program_path+r"\History"  # เปลี่ยนเป็น path ที่ต้องการเปิด
@@ -152,11 +160,12 @@ def open_History_folder(program_path):
     # เปิดโฟลเดอร์ด้วยโปรแกรมเริ่มต้นของระบบ Windows
     os.startfile(folder_path)
 
+#* function that open Result file when finish
 def open_Result_file():
     current_date = datetime.now().date()
     os.startfile(f".\\History\\{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt")
 
-
+#* check is rate limit is number
 def validate_entry(new_value):
     if new_value == "No Limit" or new_value == "":
         return True
@@ -166,6 +175,7 @@ def validate_entry(new_value):
     except ValueError:
         return False
 
+
 def on_focus_in(event):
     if event.widget.get() == "No Limit":
         event.widget.delete(0, tk.END)
@@ -174,6 +184,7 @@ def on_focus_out(event):
     if event.widget.get() == "":
         event.widget.insert(0, "No Limit")
 
+#* GUI
 root = tk.Tk()
 root.title("Open History Folder")
 root.geometry('700x500+350+100')
@@ -249,12 +260,16 @@ progress_Time.place_forget()
 
 switch_frame = tk.Frame(root)
 switch_frame.place_forget()
+
+#* fuction that pause program
 def pauseing():
     global running
     running = False
+#* function that resume program
 def resuming():
     global running
     running = True
+
 switch_variable = tk.StringVar(value="resume")
 pause_button = tk.Radiobutton(switch_frame, text="pause", variable=switch_variable,
                             indicatoron=False, value="pause", width=8,command=pauseing)
@@ -273,6 +288,7 @@ progressbar = ttk.Progressbar(root, variable=progress)
 root.after(0, update_status)
 root.after(0, open_file)
 
+#* write result on file in History depending on domain
 def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     os.makedirs("./History", exist_ok=True)
     current_date = datetime.now().date()
@@ -296,7 +312,7 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     print("Finish")
 
 
-    
+#* fetch website content
 def fetch_website_content(url):
     try:
         response = requests.get(url)
@@ -317,6 +333,7 @@ def fetch_website_content(url):
         result_text.config(state=tk.DISABLED)
         return None
 
+#* find defacement on website
 def find_defacement(url,url_main_sub,rateLimit=3):
     #* Check HTML content variable
     found =[]
