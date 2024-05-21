@@ -17,9 +17,11 @@ from tkinter import ttk
 
 #* golbal variable
 running =False
-thread = None   
+thread = None
 
-#*running fetch function
+"""
+running fetch function
+"""
 def run():
     #*check if url is valid
     website_url_sub1 = URL_Entry.get()
@@ -66,7 +68,9 @@ def run():
     thread = Thread(target=find_defacement,args=(website_url_sub1,"",rateLimit,))
     thread.start()
 
-#*return to home screen
+"""
+return to home screen
+"""
 def back():
     global running
     running = False
@@ -100,7 +104,12 @@ def back():
     result_text.delete('1.0', tk.END)
     result_text.config(state=tk.DISABLED)
     
-#*check if url is valid
+    """
+    check if url is valid
+
+    Returns:
+        boolean: True if url is valid, False otherwise
+    """
 def is_valid_domain(domain):
     try:
         socket.gethostbyname(domain)
@@ -108,7 +117,11 @@ def is_valid_domain(domain):
     except socket.error:
         return False
 
-#*check if keyword.txt file exist if not create one
+"""
+check if keyword.txt file exist if not create one.
+Effect:
+    -show mwssage box
+"""
 def open_file():
         try:
             with open('keyword.txt', 'r', encoding='utf-8') as file:
@@ -119,7 +132,10 @@ def open_file():
             open('keyword.txt', "x", encoding='utf-8')
             messagebox.showinfo("File not found","keyword.txt not found. created keyword.txt on this direction.")
 
-#*save keyword in home screen in to the keyword.txt file
+"""
+save keyword in home screen in to the keyword.txt file
+Effect : keyword.txt will be created if not exist
+"""
 def save_file():
         content = text.get(1.0, tk.END)
         try:
@@ -261,18 +277,20 @@ progress_Time.place_forget()
 switch_frame = tk.Frame(root)
 switch_frame.place_forget()
 
-#* fuction that pause program
-def pauseing():
+"""fuction that pause program from running
+"""
+def pausing():
     global running
     running = False
-#* function that resume program
+"""function that resume program from pausing
+"""
 def resuming():
     global running
     running = True
 
 switch_variable = tk.StringVar(value="resume")
 pause_button = tk.Radiobutton(switch_frame, text="pause", variable=switch_variable,
-                            indicatoron=False, value="pause", width=8,command=pauseing)
+                            indicatoron=False, value="pause", width=8,command=pausing)
 resume_button = tk.Radiobutton(switch_frame, text="resume", variable=switch_variable,
                             indicatoron=False, value="resume", width=8,command =resuming)
 
@@ -288,7 +306,12 @@ progressbar = ttk.Progressbar(root, variable=progress)
 root.after(0, update_status)
 root.after(0, open_file)
 
-#* write result on file in History depending on domain
+"""
+write result on file in History depending on domain
+Effect:
+    -Create history folder if not exist
+    -Create and write result file
+"""
 def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     os.makedirs("./History", exist_ok=True)
     current_date = datetime.now().date()
@@ -311,8 +334,15 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     f.write("------------------------------------------------------------------")
     print("Finish")
 
-
-#* fetch website content
+"""
+fetch website content from url 
+Effect:
+    print string in result_text
+Parameters:
+    url (string): website url
+Returns:
+    String: HTML content of the website
+"""
 def fetch_website_content(url):
     try:
         response = requests.get(url)
@@ -333,7 +363,19 @@ def fetch_website_content(url):
         result_text.config(state=tk.DISABLED)
         return None
 
-#* find defacement on website
+"""
+    This fuction will create keyword.txt if not exist and ignore running 
+    if keyword.txt already exist it will use keyword from keyword.txt each line
+    to find defacement on HTML content from url and create file to keep history
+    Effect:
+        -print string in result_text
+        -create keyword.txt if not exist
+        -read keyword from keyword.txt
+    Parameters:
+        url (string): website url
+        url_main_sub (string): path url of the website DEFAULT: ''
+        rateLimit (int): number of request per second
+"""
 def find_defacement(url,url_main_sub,rateLimit=3):
     #* Check HTML content variable
     found =[]
@@ -364,16 +406,14 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 time.sleep(0.1)
             result_text.update()
             progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not Scan_Limit_Entry.get() == 'No Limit' else 0))
-            
             progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
             start_time = time.time()
-            
+
             if len(paths) ==  0: break
             else : fetch_url = paths.pop(0)
             found =[]
             website_content = fetch_website_content(fetch_url)
             fetched.add(fetch_url)
-
             if(website_content == None ): 
                 url_cannot_fetch.append(fetch_url)
                 end_time = time.time()
@@ -387,8 +427,8 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 csv_reader = csv.reader(file)
                 for keyword in csv_reader:
                     if len(keyword)==0 : continue
-                    if soup.find(string=lambda text: text and keyword[0] in text):
-                        found.append(keyword[0])
+                    if soup.find(string=lambda text: text and keyword[0].strip() in text):
+                        found.append(keyword[0].strip())
                 if(found) :
                     result_text.config(state=tk.NORMAL)
                     result_text.insert(tk.END,f"Defacement detected on the website: {fetch_url}\n")
@@ -397,15 +437,12 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                     founding.append(found)
                     result_text.see(tk.END)
                     result_text.config(state=tk.DISABLED)
-
                 else : 
                     result_text.config(state=tk.NORMAL)
                     result_text.insert(tk.END,f"No defacement detected on the website: {fetch_url}\n")
                     url_notfound.append(fetch_url)
                     result_text.see(tk.END)
                     result_text.config(state=tk.DISABLED)
-                    
-
             for link in links:
                 path = link['href']
                 path =path.strip()
@@ -423,8 +460,6 @@ def find_defacement(url,url_main_sub,rateLimit=3):
             end_time = time.time()
             elapsed_time = end_time - start_time
             estimate_time = elapsed_time*len(paths) if len(paths)<limit or rateLimit==0 else elapsed_time*(rateLimit-limit+1)
-        
-        # self.progress_Time.config(text="Finish")
         result_text.config(state=tk.NORMAL)
         result_text.insert(tk.END,f"Finish")
         result_text.see(tk.END)
@@ -435,9 +470,6 @@ def find_defacement(url,url_main_sub,rateLimit=3):
     switch_frame.place_forget()
     button5.place(x=425, y=440)
     button6.place(x=335, y=440)
-    
-
-    # self.back_button.pack(pady=20)
 
 
 root.mainloop()
