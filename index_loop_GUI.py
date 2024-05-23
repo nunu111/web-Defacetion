@@ -1,7 +1,7 @@
 import os
 import sys
 import tkinter as tk
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, builder
 from tkinter import filedialog
 from tkinter import messagebox
 import urllib.request
@@ -75,9 +75,10 @@ def run():
 return to home screen
 """
 def back():
-    global running,stop
+    global running,stop,keepHistory
     running = False
     stop = False
+    keepHistory = True
     result_title.place_forget()
     result_Label.place_forget()
     internet_text.place_forget()
@@ -331,17 +332,18 @@ def write_result(Domain,url_found,founding,url_notfound,url_cannot_fetch):
     current_date = datetime.now().date()
     f = open(f"./History/{str(urlparse(Domain).netloc)}-{current_date}.txt", "w", encoding='utf-8')
     f.write(f"{str(datetime.now().time())}\n")
-    f.write("\n[Defacement detected]\n")
+    f.write(f"summary: {len(url_found)+ len(url_notfound)+len(url_cannot_fetch) }\n")
+    f.write(f"\n[Defacement detected {len(url_found)}]\n")
     if(not url_found): f.write("-\n")
     for i in range(len(url_found)):
         f.write(f"{url_found[i]}\n")
         f.write(f"found: {founding[i]}\n")
 
-    f.write("[No defacement detected]\n")
+    f.write(f"[No defacement detected {len(url_notfound)}]\n")
     if(not url_notfound): f.write("-\n")
     for i in url_notfound:
         f.write(f"{i}\n")
-    f.write("[Cannot fetch URL]\n")
+    f.write(f"[Cannot fetch URL {len(url_cannot_fetch)}]\n")
     if(not url_cannot_fetch): f.write("-\n")
     for i in url_cannot_fetch:
         f.write(f"{i}\n")
@@ -360,6 +362,7 @@ Returns:
 def fetch_website_content(url):
     try:
         response = requests.get(url)
+        response.encoding = 'utf-8'
         if response.status_code == 200:
             return response.text
         else: #! cannot access to website
@@ -411,20 +414,23 @@ def find_defacement(url,url_main_sub,rateLimit=3):
     root.update()
     
     try:
+        #*if keyword.txt not exits create one
         open('keyword.txt', "x")
         print('keyword.txt does not exits.\nNow it was created please write keyword in file')
         return
     except FileExistsError:
         while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
+            #*User click pause
             while not running:
                 time.sleep(0.1)
                 if stop : break
             if stop : break
             result_text.update()
+            #*Progress bar
             progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not (Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '') else 0))
             progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
             start_time = time.time()
-
+            #*check is it still has url in paths
             if len(paths) ==  0: break
             else : fetch_url = paths.pop(0)
             found =[]
@@ -437,10 +443,14 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 estimate_time -= elapsed_time
                 limit+=1
                 continue
-            soup = BeautifulSoup(website_content, 'html.parser')
+            try:
+                soup = BeautifulSoup(website_content, 'html.parser')
+            except builder.ParserRejectedMarkup:
+                continue
             links = soup.find_all('a', href=True)
             with open('keyword.txt','r', encoding='utf-8') as file:
                 csv_reader = csv.reader(file)
+                #*get keyword from keyword.txt for each line
                 for keyword in csv_reader:
                     if len(keyword)==0 : continue
                     if soup.find(string=lambda text: text and keyword[0].strip() in text):
