@@ -19,6 +19,7 @@ from tkinter import ttk
 running =False
 stop = False
 thread = None
+keepHistory = True
 Domain_URL = ""
 """
 running fetch function
@@ -287,9 +288,11 @@ def pausing():
     global running
     running = False
 def stopping():
-    global stop
+    global stop ,keepHistory
     pausing()
-    if messagebox.askyesno("Confirmation", "Are you sure you want to stop?\nThis will end this process and keep only history of current processed"):
+    if messagebox.askyesno("Confirmation", "Are you sure you want to stop?\nThis will end this process."):
+        if not messagebox.askyesno("Confirmation","keep history of current processed?"): 
+            keepHistory = False
         stop = True
     else: resuming()
 
@@ -479,7 +482,8 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         result_text.config(state=tk.DISABLED)
         progress_Time.config(text="Finish")
         progress.set(99.9)
-        write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
+
+        if keepHistory :write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
     
     switch_frame.place_forget()
     button5.place(x=425, y=440)
