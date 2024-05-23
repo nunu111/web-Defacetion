@@ -17,6 +17,7 @@ from tkinter import ttk
 
 #* golbal variable
 running =False
+stop = False
 thread = None
 Domain_URL = ""
 """
@@ -73,8 +74,9 @@ def run():
 return to home screen
 """
 def back():
-    global running
+    global running,stop
     running = False
+    stop = False
     result_title.place_forget()
     result_Label.place_forget()
     internet_text.place_forget()
@@ -284,6 +286,13 @@ switch_frame.place_forget()
 def pausing():
     global running
     running = False
+def stopping():
+    global stop
+    pausing()
+    if messagebox.askyesno("Confirmation", "Are you sure you want to stop?\nThis will end this process and keep only history of current processed"):
+        stop = True
+    else: resuming()
+
 """function that resume program from pausing
 """
 def resuming():
@@ -295,10 +304,10 @@ pause_button = tk.Radiobutton(switch_frame, text="pause", variable=switch_variab
                             indicatoron=False, value="pause", width=8,command=pausing)
 resume_button = tk.Radiobutton(switch_frame, text="resume", variable=switch_variable,
                             indicatoron=False, value="resume", width=8,command =resuming)
-
+stop_button = tk.Button(switch_frame,text="stop", command=stopping)
 pause_button.pack(side="left")
 resume_button.pack(side="left")
-
+stop_button.pack(side="left")
 button6 = tk.Button(root, text="View Result", command=open_Result_file)
 button6.place_forget()
 
@@ -406,6 +415,8 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         while(isNotFinish and (limit <= rateLimit or rateLimit==0)):
             while not running:
                 time.sleep(0.1)
+                if stop : break
+            if stop : break
             result_text.update()
             progressbar.step(bar+(99.9/float(Scan_Limit_Entry.get()) if not (Scan_Limit_Entry.get() == 'No Limit' or Scan_Limit_Entry.get() == '') else 0))
             progress_Time.config(text=f"Estimate time: {round(estimate_time, 2)} sec")
