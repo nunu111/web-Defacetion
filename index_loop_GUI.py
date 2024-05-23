@@ -18,7 +18,7 @@ from tkinter import ttk
 #* golbal variable
 running =False
 thread = None
-
+Domain_URL = ""
 """
 running fetch function
 """
@@ -30,7 +30,8 @@ def run():
     if(URL_Entry.get() == "" or not is_valid_domain(urlparse(website_url_sub1).netloc)): 
         messagebox.showerror("URL not valid","URL not valid or domain not found.")
         return
-
+    global Domain_URL
+    Domain_URL = website_url_sub1
     #*clear the home screen
     title.place_forget()
     by.place_forget()
@@ -178,8 +179,9 @@ def open_History_folder(program_path):
 
 #* function that open Result file when finish
 def open_Result_file():
+    global Domain_URL
     current_date = datetime.now().date()
-    os.startfile(f".\\History\\{str(urlparse(URL_Entry.get()).netloc)}-{current_date}.txt")
+    os.startfile(f".\\History\\{str(urlparse(Domain_URL).netloc)}-{current_date}.txt")
 
 #* check is rate limit is number
 def validate_entry(new_value):
