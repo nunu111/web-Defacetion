@@ -482,8 +482,9 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                         path = url+path
                     elif(path.startswith(url)):
                         path = path
-                    else :
+                    elif (not (path.startswith("https://")or path.startswith("http://"))):
                         path = url+'/'+path
+                    else : continue
                     if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
