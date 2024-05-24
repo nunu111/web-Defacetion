@@ -474,7 +474,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 path =path.strip()
                 if(path == None) : continue
                 if (len(path) > 1):
-                    if (path.startswith(sub_fetch_domain) and not sub_fetch_domain==""):
+                    if (path.startswith(sub_fetch_domain) and not sub_fetch_domain=="" and not sub_fetch_domain=="/"):
                         sub_path =path
                         sub_path = sub_path[len(sub_fetch_domain):]
                         path = url+sub_path
