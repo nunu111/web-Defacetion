@@ -405,9 +405,9 @@ def find_defacement(url,url_main_sub,rateLimit=3):
     #* Passive scan variable
     fetched =set()
     fetch_domain = url.strip()
-    sub_fetch_domain = url_main_sub.strip()
+    sub_fetch_domain = urlparse(url).path
     isNotFinish = True
-    paths = [fetch_domain+sub_fetch_domain]
+    paths = [fetch_domain]
     limit =1
     estimate_time=0
     
@@ -474,11 +474,16 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                 path =path.strip()
                 if(path == None) : continue
                 if (len(path) > 1):
-                    if(path.startswith('/')):
+                    if(path.startswith(sub_fetch_domain)):
+                        sub_path =path
+                        sub_path = sub_path[len(sub_fetch_domain):]
+                        path = url+sub_path
+                    elif(path.startswith('/')):
                         path = url+path
                     elif(path.startswith(url)):
                         path = path
-                    else :continue
+                    else :
+                        path = url+'/'+path
                     if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
