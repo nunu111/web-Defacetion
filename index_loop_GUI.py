@@ -483,7 +483,9 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                     elif(path.startswith(url)):
                         path = path
                     else :continue
-                    if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')):
+                    if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')or 
+                            path.endswith('.mp4') or path.endswith('.mp3') or path.endswith('.jpeg')or
+                            path.endswith('.jpg') or path.endswith('.doc') or path.endswith('.xlsm')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
             limit += 1
