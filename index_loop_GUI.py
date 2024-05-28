@@ -501,7 +501,7 @@ def find_defacement(url,url_main_sub,rateLimit=3):
         result_text.config(state=tk.DISABLED)
         progress_Time.config(text="Finish")
         progress.set(99.9)
-
+        messagebox.showinfo("Alert", "Process Finish")
         if keepHistory :write_result(url,url_found,founding,url_notfound,url_cannot_fetch)
     
     switch_frame.place_forget()
