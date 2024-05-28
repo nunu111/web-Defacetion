@@ -482,6 +482,8 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                         path = url+'/'+path
                     elif(path.startswith(url)):
                         path = path
+                    elif(path.startswith('/')):
+                        path = url+path
                     elif ('.php' in path) and not (('https://' in path) or ('http://' in path)):
                         path = url+'/'+path
                     else :continue
