@@ -401,7 +401,6 @@ def find_defacement(url,url_main_sub,rateLimit=3):
     founding=[]
     url_notfound =[]
     url_cannot_fetch = []
-
     #* Passive scan variable
     fetched =set()
     fetch_domain = url.strip()
@@ -472,20 +471,24 @@ def find_defacement(url,url_main_sub,rateLimit=3):
             for link in links:
                 path = link['href']
                 path =path.strip()
+                
                 if(path == None) : continue
                 if (len(path) > 1):
                     if (path.startswith(sub_fetch_domain) and not sub_fetch_domain=="" and not sub_fetch_domain=="/"):
                         sub_path =path
                         sub_path = sub_path[len(sub_fetch_domain):]
                         path = url+sub_path
-                    elif(path.startswith('/')):
-                        path = url+path
+                    elif(path.startswith('?')):
+                        path = url+'/'+path
                     elif(path.startswith(url)):
                         path = path
+                    elif ('.php' in path) and not (('https://' in path) or ('http://' in path)):
+                        path = url+'/'+path
                     else :continue
                     if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')or 
                             path.endswith('.mp4') or path.endswith('.mp3') or path.endswith('.jpeg')or
-                            path.endswith('.jpg') or path.endswith('.doc') or path.endswith('.xlsm')):
+                            path.endswith('.jpg') or path.endswith('.doc') or path.endswith('.xlsm')or
+                            path.endswith('.jfif') or path.endswith('.JPG')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
             limit += 1
