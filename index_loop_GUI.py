@@ -484,12 +484,24 @@ def find_defacement(url,url_main_sub,rateLimit=3):
                         path = path
                     elif(path.startswith('/')):
                         path = url+path
+                    # elif(path.startswith('.')): #!unfinish
+                    #     temp_url= fetch_url
+                    #     period_count = len(path) - len(path.lstrip('.'))
+                    #     temp_url= temp_url.split('/')
+                    #     parts=path.lstrip('.').split('/')
+                    #     if period_count == 1:
+                    #         temp_url = temp_url[:-period_count]
+                    #     elif period_count == 2:
+                    #         temp_url = url.rstrip(sub_fetch_domain).split('/')
+                    #     if parts:
+                    #         temp_url.append(parts[-1])
+                    #     path = '/'.join(temp_url)
                     elif ('.php' in path) and not (('https://' in path) or ('http://' in path)):
                         path = url+'/'+path
                     else :continue
                     if not (path.endswith('.pdf') or path.endswith('.jpg') or path.endswith('.png')or 
                             path.endswith('.mp4') or path.endswith('.mp3') or path.endswith('.jpeg')or
-                            path.endswith('.jpg') or path.endswith('.doc') or path.endswith('.xlsm')or
+                            path.endswith('.jpg') or path.endswith('.doc') or path.endswith('.xlsx')or
                             path.endswith('.jfif') or path.endswith('.JPG')):
                         if  ((path not in paths)and( path not in fetched)):
                             paths.append(path)
